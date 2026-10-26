@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>پنل ستاره طلایی</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Markazi+Text:wght@400..700&family=Vazirmatn:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { background: var(--sand); }
+    .adm { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+    .adm__side { background: var(--night); color: rgba(239,231,216,.8); padding: 20px 14px; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 0; height: 100vh; }
+    .adm__side .nav__brand { color: var(--paper); margin-bottom: 18px; }
+    .adm__side button { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 12px; text-align: right; font-size: 14.5px; transition: background-color .2s; }
+    .adm__side button:hover { background: rgba(255,255,255,.06); }
+    .adm__side button.is-on { background: rgba(212,168,75,.14); color: var(--gold-soft); }
+    .adm__side svg { width: 20px; height: 20px; }
+    .adm__side .back { margin-top: auto; font-size: 13px; padding: 10px 12px; color: rgba(239,231,216,.6); }
+    .adm__main { padding: 24px 32px 48px; display: grid; gap: 20px; align-content: start; }
+    .adm__top { display: flex; align-items: center; gap: 16px; justify-content: space-between; flex-wrap: wrap; }
+    .adm__top h1 { font-size: 44px; }
+    .adm__top input { max-width: 340px; background: var(--paper); }
+    .who { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+    .who i { width: 36px; height: 36px; border-radius: 50%; background: var(--navy); color: var(--gold-soft); display: grid; place-items: center; font-style: normal; font-weight: 700; }
+    .demo-note { font-size: 13px; color: var(--ink-2); background: var(--paper); border-radius: 12px; padding: 10px 14px; }
+    .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .tile { background: var(--paper); border-radius: 18px; padding: 18px 20px; display: grid; gap: 2px; }
+    .tile small { font-size: 13px; color: var(--ink-2); }
+    .tile b { font: 700 42px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+    .tile .delta { font-size: 13px; color: var(--jade); }
+    .panels { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; }
+    .panel { background: var(--paper); border-radius: 20px; padding: 20px; display: grid; gap: 12px; align-content: start; }
+    .panel h2 { font-size: 30px; }
+    .panel__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .panel__head small { color: var(--ink-2); font-size: 13px; }
+    .chart { position: relative; }
+    .chart svg { width: 100%; height: 260px; display: block; overflow: visible; }
+    .chart .tip { position: absolute; pointer-events: none; background: var(--night); color: var(--paper); padding: 8px 12px; border-radius: 10px; font-size: 13px; transform: translate(50%, -110%); white-space: nowrap; opacity: 0; transition: opacity .15s; }
+    .chart .tip b { color: var(--gold-soft); }
+    .feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: 300px; overflow: auto; }
+    .feed li { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 10px 4px; border-bottom: 1px solid var(--line); font-size: 14px; animation: msg .4s var(--ease); }
+    .feed li svg { width: 18px; height: 18px; color: var(--gold-ink); }
+    .feed small { color: var(--ink-3); font-size: 12px; }
+    .live { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--jade); }
+    .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--jade); animation: typing 1.4s infinite; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: right; font-weight: 500; color: var(--ink-2); padding: 10px 8px; border-bottom: 1px solid var(--line); font-size: 13px; }
+    td { padding: 12px 8px; border-bottom: 1px solid var(--line); }
+    td.num { font-variant-numeric: tabular-nums; }
+    .status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 2px 10px; border-radius: 8px; }
+    .status svg { width: 14px; height: 14px; }
+    .st-new { background: rgba(212,168,75,.16); color: var(--gold-ink); }
+    .st-ship { background: rgba(46,95,138,.12); color: #2e5f8a; }
+    .st-done { background: rgba(47,94,87,.12); color: var(--jade); }
+    .st-ret { background: rgba(162,52,43,.1); color: var(--lacquer); }
+    .sched { display: grid; gap: 10px; }
+    .sched__row { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 12px; border-radius: 14px; background: #fff; border: 1px solid var(--line); }
+    .sched__row b { font-size: 14.5px; display: block; }
+    .sched__row small { color: var(--ink-2); font-size: 12.5px; }
+    .switch { position: relative; width: 48px; height: 28px; border-radius: 14px; background: var(--sand-2); transition: background-color .2s; flex: none; }
+    .switch::after { content: ""; position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .25s var(--spring); }
+    .switch[aria-checked=true] { background: var(--jade); }
+    .switch[aria-checked=true]::after { transform: translateX(-20px); }
+    .stock-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; font-size: 14px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+    .stock-row img { width: 30px; height: 44px; object-fit: contain; }
+    .funnel { display: grid; gap: 8px; }
+    .funnel div { display: grid; grid-template-columns: 110px 1fr 60px; gap: 10px; align-items: center; font-size: 13.5px; }
+    .funnel i { display: block; height: 22px; border-radius: 0 4px 4px 0; background: var(--navy); }
+    .funnel span:last-child { text-align: left; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+    @media (max-width: 1000px) { .adm { grid-template-columns: 1fr; } .adm__side { position: static; height: auto; flex-direction: row; overflow-x: auto; } .adm__side .nav__brand, .adm__side .back { display: none; } .adm__side button { flex: none; } .tiles { grid-template-columns: 1fr 1fr; } .panels { grid-template-columns: 1fr; } .adm__main { padding: 16px; } }
+  </style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-logo" viewBox="0 0 32 32"><g fill="currentColor"><rect x="7" y="7" width="18" height="18"/><rect x="7" y="7" width="18" height="18" transform="rotate(45 16 16)"/></g><circle cx="16" cy="16" r="5.2" fill="var(--logo-hole, #070b22)"/><circle cx="16" cy="16" r="2.2" fill="currentColor"/></symbol>
+  <symbol id="a-dash" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="13" y="4" width="7" height="5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="13" y="11" width="7" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="4" y="15" width="7" height="5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="a-box" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M4 7.5l8 4.5 8-4.5 M12 12v9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="a-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2a1.5 1.5 0 0 1-1.5 1.3H7.7a1.5 1.5 0 0 1-1.5-1.3z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 10V7a3 3 0 0 1 6 0v3" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="a-users" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3 19c1-3 3.3-4.5 6-4.5s5 1.5 6 4.5M16 6a3 3 0 0 1 0 6M18 14.6c1.5.6 2.5 2 3 4.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="a-card" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="a-mega" viewBox="0 0 24 24"><path d="M4 10v4h3l7 4V6L7 10z M17 9.5a3.5 3.5 0 0 1 0 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="a-chart" viewBox="0 0 24 24"><path d="M4 20h16M7 16v-5M12 16V7M17 16v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="a-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="a-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="currentColor"/></symbol>
+  <symbol id="a-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="a-truck" viewBox="0 0 24 24"><path d="M3 6.5h11v9H3z M14 9.5h4l3 3.2v2.8h-7" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="a-ret" viewBox="0 0 24 24"><path d="M9 7L5 11l4 4M5 11h9a5 5 0 0 1 0 10h-2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+</defs></svg>
+
+<div class="adm">
+  <aside class="adm__side">
+    <a class="nav__brand" href="index.html"><svg class="nav__logo"><use href="#i-logo"/></svg><span>پنل ستاره طلایی</span></a>
+    <button type="button" class="is-on"><svg><use href="#a-dash"/></svg>داشبورد</button>
+    <button type="button"><svg><use href="#a-bag"/></svg>سفارش‌ها</button>
+    <button type="button"><svg><use href="#a-box"/></svg>محصولات و انبار</button>
+    <button type="button"><svg><use href="#a-users"/></svg>مشتریان و باشگاه</button>
+    <button type="button"><svg><use href="#a-card"/></svg>مالی و درگاه‌ها</button>
+    <button type="button"><svg><use href="#a-mega"/></svg>بنرها و پاپ‌آپ‌ها</button>
+    <button type="button"><svg><use href="#a-chart"/></svg>گزارش‌ها</button>
+    <button type="button"><svg><use href="#a-lock"/></svg>کاربران و دسترسی</button>
+    <a class="back" href="index.html">بازگشت به فروشگاه</a>
+  </aside>
+  <main class="adm__main">
+    <div class="adm__top">
+      <h1>داشبورد</h1>
+      <input type="search" placeholder="جست‌وجوی سفارش، محصول یا مشتری…" aria-label="جست‌وجو">
+      <div class="who"><i>م</i><span>مدیر سیستم</span></div>
+    </div>
+    <p class="demo-note">نمای نمونه؛ داده‌ها فرضی‌اند و رویدادها برای نمایش، هر چند ثانیه شبیه‌سازی می‌شوند.</p>
+    <section class="tiles" aria-label="شاخص‌های امروز">
+      <div class="tile"><small>فروش امروز (میلیون تومان)</small><b id="k-sales">۱۸۴</b><span class="delta">▲ ۱۲٪ نسبت به دیروز</span></div>
+      <div class="tile"><small>سفارش‌های جدید</small><b id="k-orders">۶۲</b><span class="delta">▲ ۸٪</span></div>
+      <div class="tile"><small>کاربران آنلاین</small><b id="k-online">۱٬۲۴۰</b><span class="delta">▲ ۵٪</span></div>
+      <div class="tile"><small>نرخ تبدیل</small><b>۲٫۴٪</b><span class="delta">▲ ۰٫۳ واحد</span></div>
+    </section>
+    <section class="panels">
+      <div class="panel">
+        <div class="panel__head"><h2>فروش ۷ روز گذشته</h2><small>میلیون تومان</small></div>
+        <div class="chart" id="chart"><svg id="bars" role="img" aria-label="نمودار فروش هفت روز گذشته"></svg><div class="tip" id="tip"></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><h2>رویدادهای سایت</h2><span class="live">زنده</span></div>
+        <ul class="feed" id="feed"></ul>
+      </div>
+    </section>
+    <section class="panels">
+      <div class="panel">
+        <div class="panel__head"><h2>آخرین سفارش‌ها</h2><small>به‌روز با هر سفارش</small></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>شماره</th><th>مشتری</th><th>کالا</th><th>مبلغ</th><th>درگاه</th><th>وضعیت</th></tr></thead><tbody id="orders"></tbody></table></div>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><h2>بنرها و پاپ‌آپ‌ها</h2></div>
+        <div class="sched" id="sched"></div>
+      </div>
+    </section>
+    <section class="panels">
+      <div class="panel">
+        <div class="panel__head"><h2>قیف خرید امروز</h2><small>از ورود تا پرداخت</small></div>
+        <div class="funnel" id="funnel"></div>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><h2>موجودی رو به اتمام</h2></div>
+        <div id="stock"></div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="js/rugs.js"></script>
+<script src="js/data.js"></script>
+<script>
+(function () {
+  const { fa, toman, products } = window.ST;
+  const $ = (s) => document.querySelector(s);
+  // weekly sales, one series → one hue, no legend, hover tooltip per bar
+  const days = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+  const vals = [132, 148, 121, 165, 172, 210, 184];
+  const svg = $('#bars'), W = 600, H = 260, pad = { t: 16, r: 8, b: 30, l: 36 };
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const max = 240, bw = (W - pad.l - pad.r) / vals.length;
+  let g = '';
+  [0, 60, 120, 180, 240].forEach((v) => { const y = H - pad.b - (v / max) * (H - pad.t - pad.b); g += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y}" y2="${y}" stroke="rgba(23,26,51,.08)"/><text x="${pad.l - 8}" y="${y + 4}" font-size="11" fill="#868aa0" text-anchor="end">${fa(v)}</text>`; });
+  vals.forEach((v, i) => {
+    // RTL: Saturday on the right
+    const x = W - pad.r - (i + 1) * bw + bw * 0.22, w = bw * 0.56, h = (v / max) * (H - pad.t - pad.b), y = H - pad.b - h;
+    const last = i === vals.length - 1;
+    g += `<path d="M${x} ${H - pad.b} V${y + 4} q0 -4 4 -4 h${w - 8} q4 0 4 4 V${H - pad.b} Z" fill="${last ? '#d4a84b' : '#1b2148'}"/>`;
+    g += `<rect x="${x - bw * 0.2}" y="${pad.t}" width="${bw}" height="${H - pad.t - pad.b}" fill="transparent" data-i="${i}" style="cursor:pointer"/>`;
+    g += `<text x="${x + w / 2}" y="${H - 10}" font-size="12" fill="#4f546d" text-anchor="middle">${days[i]}</text>`;
+  });
+  g += `<text x="${W - pad.r - 7 * bw + bw / 2}" y="${H - pad.b - (vals[6] / max) * (H - pad.t - pad.b) - 8}" font-size="12" font-weight="700" fill="#171a33" text-anchor="middle">${fa(vals[6])}</text>`;
+  svg.innerHTML = g;
+  const tip = $('#tip');
+  svg.querySelectorAll('[data-i]').forEach((r) => {
+    r.addEventListener('pointerenter', () => { const i = +r.dataset.i; const b = r.getBoundingClientRect(), c = $('#chart').getBoundingClientRect(); tip.innerHTML = `${days[i]}: <b>${fa(vals[i])} میلیون</b>`; tip.style.right = (c.right - b.right + b.width / 2) + 'px'; tip.style.top = (b.top - c.top + b.height * (1 - vals[i] / max)) + 'px'; tip.style.opacity = 1; });
+    r.addEventListener('pointerleave', () => { tip.style.opacity = 0; });
+  });
+
+  const P = (id) => products.find((p) => p.id === id);
+  const names = ['سارا محمدی', 'علی رضایی', 'مریم کاظمی', 'حسین نوری', 'نرگس احمدی', 'رضا کریمی', 'زهرا موسوی'];
+  const gates = ['درگاه بانکی', 'اسنپ‌پی', 'کیف پول', 'دی‌جی‌پی', 'ترکیبی'];
+  const ST = { new: ['st-new', 'a-dot', 'جدید'], ship: ['st-ship', 'a-truck', 'در راه'], done: ['st-done', 'a-check', 'تحویل شد'], ret: ['st-ret', 'a-ret', 'مرجوعی'] };
+  const orders = [];
+  for (let i = 0; i < 6; i++) { const p = products[(i * 5) % products.length]; orders.push({ id: 'ST-' + (711200 + i * 37), n: names[i], p, s: ['new', 'ship', 'done', 'ship', 'done', 'ret'][i], g: gates[i % 5] }); }
+  function renderOrders() {
+    $('#orders').innerHTML = orders.slice(0, 7).map((o) => { const st = ST[o.s]; return `<tr><td class="num">${fa(o.id)}</td><td>${o.n}</td><td>${o.p.title} ${o.p.sizes[o.p.defaultSize].label}</td><td class="num">${toman(o.p.finalPrice())}</td><td>${o.g}</td><td><span class="status ${st[0]}"><svg><use href="#${st[1]}"/></svg>${st[2]}</span></td></tr>`; }).join('');
+  }
+  renderOrders();
+
+  const EV = [
+    ['a-bag', () => { const p = products[Math.floor(Math.random() * products.length)]; orders.unshift({ id: 'ST-' + (711500 + Math.floor(Math.random() * 400)), n: names[Math.floor(Math.random() * names.length)], p, s: 'new', g: gates[Math.floor(Math.random() * 5)] }); renderOrders(); return `سفارش جدید: ${p.title} ${p.sizes[p.defaultSize].label}`; }],
+    ['a-card', () => `پرداخت موفق از ${gates[Math.floor(Math.random() * 5)]}`],
+    ['a-box', () => 'موجودی کناره ۸۰×۳۰۰ هراتی رو به اتمام است'],
+    ['a-users', () => `${fa(2 + Math.floor(Math.random() * 6))} عضو جدید در باشگاه مشتریان`],
+    ['a-mega', () => 'پاپ‌آپ «هدیه اولین خرید» ۱۲ بار دیده شد'],
+  ];
+  const feed = $('#feed');
+  function pushEvent(k, when) {
+    const e = EV[k]; const li = document.createElement('li');
+    li.innerHTML = `<svg><use href="#${e[0]}"/></svg><span>${e[1]()}</span><small>${when || 'همین حالا'}</small>`;
+    feed.prepend(li); while (feed.children.length > 12) feed.lastChild.remove();
+  }
+  [[2, '۱۱ دقیقه پیش'], [1, '۴ دقیقه پیش'], [3, 'امروز'], [4, 'امروز']].forEach((x) => pushEvent(x[0], x[1]));
+  let sales = 184, ord = 62;
+  setInterval(() => {
+    const k = Math.floor(Math.random() * EV.length); pushEvent(k);
+    if (k === 0) { ord++; sales += 6 + Math.floor(Math.random() * 20); $('#k-orders').textContent = fa(ord); $('#k-sales').textContent = fa(sales); }
+    $('#k-online').textContent = fa((1180 + Math.floor(Math.random() * 120)).toLocaleString('en-US').replace(/,/g, '٬'));
+  }, 4200);
+
+  const sched = [
+    ['پاپ‌آپ هدیه اولین خرید', '۱۶ ثانیه پس از ورود، یک بار در هر بازدید', true],
+    ['پاپ‌آپ هنگام خروج', 'فقط دسکتاپ، وقتی موس از صفحه بیرون می‌رود', true],
+    ['بنر «شب‌های کویر»', 'اسلاید اول، تا ۳۰ آبان', true],
+    ['نوار حراج پاییزه', 'تا جمعه ۲۳:۵۹، با شمارش معکوس', true],
+    ['کمپین یلدا', 'زمان‌بندی: ۲۵ آذر تا ۱ دی', false],
+  ];
+  $('#sched').innerHTML = sched.map((s, i) => `<div class="sched__row"><div><b>${s[0]}</b><small>${s[1]}</small></div><span class="status ${s[2] ? 'st-done' : 'st-new'}" id="ss${i}">${s[2] ? 'فعال' : 'زمان‌بندی شده'}</span><button class="switch" type="button" role="switch" aria-checked="${s[2]}" aria-label="${s[0]}" data-i="${i}"></button></div>`).join('');
+  document.querySelectorAll('.switch').forEach((b) => b.addEventListener('click', () => { const on = b.getAttribute('aria-checked') !== 'true'; b.setAttribute('aria-checked', on); const st = $('#ss' + b.dataset.i); st.className = 'status ' + (on ? 'st-done' : 'st-new'); st.textContent = on ? 'فعال' : 'غیرفعال'; }));
+
+  const fun = [['بازدید', 12400], ['دیدن محصول', 5210], ['افزودن به سبد', 1180], ['ورود با موبایل', 610], ['پرداخت موفق', 298]];
+  $('#funnel').innerHTML = fun.map((f) => `<div><span>${f[0]}</span><i style="width:${Math.max(3, f[1] / fun[0][1] * 100)}%"></i><span>${fa(f[1].toLocaleString('en-US').replace(/,/g, '٬'))}</span></div>`).join('');
+
+  $('#stock').innerHTML = [['st117', 3], ['st100', 5], ['st122', 4], ['st130', 2]].map((s) => { const p = P(s[0]); return `<div class="stock-row"><img alt="" src="${window.Loom.rugURL(window.ST.imgOpts(p, 60))}"><span>${p.title} ${p.sizes[p.defaultSize].label}</span><span class="status st-ret">${fa(s[1])} عدد</span></div>`; }).join('');
+})();
+</script>
+</body>
+</html>
